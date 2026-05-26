@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-keymap",
+    "ms-python.pylint",
+    "ms-python.black-formatter",
+    "eamodio.gitlens"
+  ]
+}

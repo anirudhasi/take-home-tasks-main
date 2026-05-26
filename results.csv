@@ -1,0 +1,28 @@
+unit_id,predicted_rul,actual_rul,failure_prob_30,health_index,prediction_std,warning_level,last_cycle,n_cycles_observed,error,abs_error
+PUMP_008,39.6,8,0.0177,0.786,9.7,AMBER,172,172,31.6,31.6
+PUMP_014,41.0,12,0.0177,0.7782,2.51,AMBER,116,116,29.0,29.0
+PUMP_005,45.9,3,0.0177,0.752,18.8,AMBER,162,162,42.9,42.9
+PUMP_009,52.1,25,0.0177,0.7182,1.91,AMBER,206,206,27.1,27.1
+PUMP_011,54.9,5,0.0177,0.7033,14.64,AMBER,151,151,49.9,49.9
+PUMP_015,69.3,50,0.0,0.6253,4.44,GREEN,172,172,19.3,19.3
+PUMP_001,72.0,55,0.0,0.611,2.16,GREEN,237,237,17.0,17.0
+PUMP_002,73.2,40,0.0,0.6044,4.41,GREEN,157,157,33.2,33.2
+PUMP_010,85.5,70,0.0,0.5379,0.93,GREEN,167,167,15.5,15.5
+PUMP_004,90.5,80,0.0,0.5106,1.35,GREEN,239,239,10.5,10.5
+PUMP_006,96.9,90,0.0,0.4764,1.89,GREEN,225,225,6.9,6.9
+
+
+# --- ACCURACY SUMMARY ---
+# Generated,2026-05-26 19:57
+# Inference time (s),14.1
+# Units predicted,11
+# Units with known actuals,11
+# RMSE (cycles),28.7
+# MAE (cycles),25.7
+# Within 30 cycles (%),64
+# Within 20 cycles (%),45
+# PHM Score (lower=better),315.3
+# Late predictions (%),100
+# RED,0 units
+# AMBER,5 units
+# GREEN,6 units
