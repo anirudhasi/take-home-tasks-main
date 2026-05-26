@@ -34,7 +34,7 @@ log = get_logger("model")
 # ─────────────────────────────────────────────────
 # Asymmetric PHM Loss
 # ─────────────────────────────────────────────────
-def _phm_grad_hess(y_pred: np.ndarray, y_true: np.ndarray, sample_weight=None):
+def _phm_grad_hess(y_true: np.ndarray, y_pred: np.ndarray, sample_weight=None):
     """
     Custom XGBoost objective: PHM Society asymmetric loss.
 
@@ -47,6 +47,8 @@ def _phm_grad_hess(y_pred: np.ndarray, y_true: np.ndarray, sample_weight=None):
 
     The asymmetry (10 vs 13) means late predictions (missed failure)
     accumulate penalty ~30% faster than early predictions (false alarms).
+
+    NOTE: XGBoost 2+ sklearn API calls objective as func(y_true, y_pred).
     """
     d = y_pred - y_true
 

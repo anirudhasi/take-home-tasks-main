@@ -1,9 +1,28 @@
-unit_id,predicted_rul,failure_prob_30,health_index,prediction_std,warning_level,last_cycle,n_cycles_observed
-PUMP_041,65.7,0.0,0.645,6.19,GREEN,106,106
-PUMP_037,78.3,0.0,0.5765,7.14,GREEN,89,89
-PUMP_028,82.9,0.0,0.5519,5.09,GREEN,158,158
-PUMP_016,84.0,0.0,0.546,8.73,GREEN,191,191
-PUMP_042,87.3,0.0,0.5281,1.93,GREEN,123,123
-PUMP_013,97.3,0.0,0.474,1.91,GREEN,164,164
-PUMP_003,116.7,0.0,0.369,1.05,GREEN,119,119
-PUMP_018,125.2,0.0,0.3232,0.41,GREEN,81,81
+unit_id,predicted_rul,actual_rul,failure_prob_30,health_index,prediction_std,warning_level,last_cycle,n_cycles_observed,error,abs_error
+PUMP_008,35.5,8,0.2445,0.8084,10.69,AMBER,172,172,27.5,27.5
+PUMP_014,42.3,12,0.0451,0.7713,3.23,AMBER,116,116,30.3,30.3
+PUMP_005,45.1,3,0.0255,0.7561,25.3,AMBER,162,162,42.1,42.1
+PUMP_011,51.6,5,0.0255,0.7209,14.64,AMBER,151,151,46.6,46.6
+PUMP_009,52.6,25,0.0255,0.7156,1.27,AMBER,206,206,27.6,27.6
+PUMP_002,70.0,40,0.0,0.6214,4.99,GREEN,157,157,30.0,30.0
+PUMP_015,73.3,50,0.0,0.6039,6.57,GREEN,172,172,23.3,23.3
+PUMP_001,75.3,55,0.0,0.5932,2.65,GREEN,237,237,20.3,20.3
+PUMP_010,83.5,70,0.0,0.5488,2.19,GREEN,167,167,13.5,13.5
+PUMP_006,103.0,90,0.0,0.4433,2.32,GREEN,225,225,13.0,13.0
+PUMP_004,103.7,80,0.0,0.4392,1.79,GREEN,239,239,23.7,23.7
+
+
+# --- ACCURACY SUMMARY ---
+# Generated,2026-05-26 22:17
+# Inference time (s),15.5
+# Units predicted,11
+# Units with known actuals,11
+# RMSE (cycles),28.8
+# MAE (cycles),27.1
+# Within 30 cycles (%),73
+# Within 20 cycles (%),18
+# PHM Score (lower=better),270.3
+# Late predictions (%),100
+# RED,0 units
+# AMBER,5 units
+# GREEN,6 units

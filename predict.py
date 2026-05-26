@@ -254,12 +254,13 @@ def _add_actual_rul(results_df: pd.DataFrame, rul_max: float) -> pd.DataFrame:
         results_df.insert(2, "actual_rul", actual_ruls)
 
         valid = results_df["actual_rul"].notna()
-        results_df["error"]     = None
-        results_df["abs_error"] = None
-        results_df.loc[valid, "error"]     = (
+        results_df["error"]     = np.nan
+        results_df["abs_error"] = np.nan
+        diff = (
             results_df.loc[valid, "predicted_rul"] - results_df.loc[valid, "actual_rul"]
         ).round(1)
-        results_df.loc[valid, "abs_error"] = results_df.loc[valid, "error"].abs().round(1)
+        results_df.loc[valid, "error"]     = diff
+        results_df.loc[valid, "abs_error"] = diff.abs()
 
         n_known = valid.sum()
         if n_known > 0:
@@ -346,18 +347,19 @@ def _shap_explanation(model, test_feat, feature_cols, results_df, rul_max):
     shap_vals = explainer.shap_values(X_unit)
 
     # Use last cycle's SHAP values
-    shap.waterfall_plot(
-        shap.Explanation(
-            values=shap_vals[-1],
-            base_values=explainer.expected_value,
-            data=X_unit[-1],
-            feature_names=feature_cols,
-        ),
-        max_display=15,
-        show=False,
+    explanation = shap.Explanation(
+        values=shap_vals[-1],
+        base_values=explainer.expected_value,
+        data=X_unit[-1],
+        feature_names=feature_cols,
     )
-    plt.title(f"SHAP explanation — Unit {top_uid} (last cycle)")
-    plt.tight_layout()
+    shap.plots.waterfall(explanation, max_display=15, show=False)
+
+    # waterfall internally calls plt.ioff(); restore interactive mode so show() works
+    plt.ion()
+    # suptitle targets the figure, not the last twin-axis that waterfall leaves as gca
+    plt.gcf().suptitle(f"SHAP explanation — Unit {top_uid} (last cycle)", y=1.02, fontsize=12)
+
     shap_path = Path("submission") / "predictions" / f"shap_{top_uid}.png"
     plt.savefig(shap_path, dpi=150, bbox_inches="tight")
     log.info(f"SHAP plot saved → {shap_path}")
