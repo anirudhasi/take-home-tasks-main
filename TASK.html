@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CODVO.AI · Take-Home — Predictive Equipment Failure</title>
+<style>
+  :root{
+    --purple:#5B2EFF; --purple-d:#4A1FD6; --ink:#111128; --ink-2:#3A3A52;
+    --mist:#6B6B85; --line:#E6E4F0; --bg:#FAF9FE; --card:#FFFFFF;
+    --green:#0B9E63; --amber:#C77700; --red:#D6334C; --chip:#F0EDFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--purple);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    background:var(--chip);color:var(--purple-d);
+    padding:.1em .42em;border-radius:5px;font-size:.86em;
+  }
+  pre{
+    background:var(--ink);color:#EDEBFF;border-radius:10px;
+    padding:18px 20px;overflow-x:auto;font-size:13px;line-height:1.6;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;margin:14px 0;
+  }
+  pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+  /* ---- header ---- */
+  header{
+    background:linear-gradient(135deg,#5B2EFF 0%,#7B4DFF 55%,#9D6BFF 100%);
+    color:#fff;padding:46px 7vw 40px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;font-weight:800;
+    letter-spacing:.5px;font-size:18px;
+  }
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:#fff}
+  .eyebrow{
+    margin-top:26px;font-size:12.5px;font-weight:700;letter-spacing:2.4px;
+    text-transform:uppercase;color:#E5DCFF;
+  }
+  header h1{
+    font-size:clamp(28px,4vw,42px);font-weight:800;line-height:1.18;
+    margin-top:8px;max-width:18ch;
+  }
+  header p.sub{margin-top:14px;font-size:16px;color:#EDE7FF;max-width:62ch}
+
+  /* ---- meta strip ---- */
+  .meta{
+    display:flex;flex-wrap:wrap;gap:0;background:var(--ink);color:#fff;
+    padding:0 7vw;
+  }
+  .meta div{
+    padding:16px 28px 16px 0;margin-right:28px;border-right:1px solid #2C2C45;
+  }
+  .meta div:last-child{border-right:none}
+  .meta .k{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:#8E8EB5}
+  .meta .v{font-size:15px;font-weight:700;margin-top:3px}
+
+  /* ---- layout ---- */
+  .wrap{display:flex;gap:48px;max-width:1180px;margin:0 auto;padding:44px 7vw 80px}
+  nav.toc{
+    position:sticky;top:24px;align-self:flex-start;width:212px;flex-shrink:0;
+    font-size:13.5px;
+  }
+  nav.toc .lbl{
+    font-size:11px;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--mist);font-weight:700;margin-bottom:10px;
+  }
+  nav.toc a{
+    display:block;color:var(--ink-2);padding:5px 0 5px 12px;
+    border-left:2px solid var(--line);
+  }
+  nav.toc a:hover{color:var(--purple);border-left-color:var(--purple);text-decoration:none}
+  main{flex:1;min-width:0}
+
+  section{margin-bottom:40px}
+  h2{
+    font-size:21px;font-weight:800;color:var(--ink);
+    padding-bottom:9px;border-bottom:2px solid var(--line);margin-bottom:16px;
+  }
+  h2 .num{color:var(--purple);margin-right:9px}
+  h3{font-size:15.5px;font-weight:700;margin:20px 0 7px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 22px}
+  li{margin:6px 0}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px 22px;margin:16px 0;
+  }
+  .lead{font-size:16.5px;color:var(--ink-2)}
+
+  .callout{
+    border-left:4px solid var(--purple);background:var(--chip);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;font-size:14.5px;
+  }
+  .callout.warn{border-left-color:var(--amber);background:#FFF6E6}
+  .callout.note{border-left-color:var(--green);background:#E9F8F1}
+  .callout b{color:var(--ink)}
+
+  table{
+    width:100%;border-collapse:collapse;margin:14px 0;font-size:13.7px;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;
+  }
+  th{
+    background:#F4F2FC;text-align:left;font-size:11.5px;letter-spacing:.6px;
+    text-transform:uppercase;color:var(--ink-2);padding:11px 14px;
+  }
+  td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#FBFAFE}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+
+  .badge{
+    display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;
+    border-radius:20px;letter-spacing:.4px;
+  }
+  .b-purple{background:var(--chip);color:var(--purple-d)}
+  .b-green{background:#E0F4EC;color:var(--green)}
+  .b-amber{background:#FBEFD6;color:var(--amber)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){
+    nav.toc{display:none}.wrap{padding:32px 6vw 60px}.grid2{grid-template-columns:1fr}
+    .meta{flex-direction:column}.meta div{border-right:none;border-bottom:1px solid #2C2C45}
+  }
+
+  footer{
+    background:var(--ink);color:#9595B8;text-align:center;
+    padding:26px 7vw;font-size:13px;
+  }
+  footer b{color:#fff}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot"></span> CODVO.AI</div>
+  <div class="eyebrow">Take-Home Assignment · Data Science Architect</div>
+  <h1>Predictive Equipment Failure — Industrial Pump Fleet</h1>
+  <p class="sub">Build an end-to-end machine-learning solution that forecasts
+  when industrial pumps are heading toward failure, using multivariate
+  time-series sensor data.</p>
+</header>
+
+<div class="meta">
+  <div><div class="k">Role</div><div class="v">Data Science Architect</div></div>
+  <div><div class="k">Effort</div><div class="v">~3 days</div></div>
+  <div><div class="k">Presentation</div><div class="v">1 hour (45 + 15 min)</div></div>
+  <div><div class="k">Due</div><div class="v">Presentation day</div></div>
+</div>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <div class="lbl">Contents</div>
+    <a href="#scenario">1 · Scenario</a>
+    <a href="#objective">2 · Your objective</a>
+    <a href="#data">3 · The dataset</a>
+    <a href="#failure">4 · How failure is encoded</a>
+    <a href="#framing">5 · Choose your framing</a>
+    <a href="#deliver">6 · What to build</a>
+    <a href="#inference">7 · The live test</a>
+    <a href="#present">8 · The presentation</a>
+    <a href="#evaluate">9 · How we evaluate</a>
+    <a href="#rules">10 · Ground rules</a>
+    <a href="#submit">11 · Timeline &amp; submission</a>
+    <a href="#faq">12 · FAQ</a>
+  </nav>
+
+  <main>
+
+  <section id="scenario">
+    <h2><span class="num">1</span>Scenario</h2>
+    <p class="lead">A process plant runs a fleet of motor-driven centrifugal
+    pumps. Unplanned pump failures stop production lines, and reactive repairs
+    are expensive and slow.</p>
+    <p>The reliability team has exported several years of historian data: a
+    run-to-failure record for each pump in the fleet, sampled roughly hourly,
+    across ~20 sensor and operating channels. They want to move from
+    <b>reactive</b> repair to <b>proactive</b> maintenance — knowing, with
+    enough lead time, that a specific pump is degrading toward failure so a
+    work order can be raised before it breaks.</p>
+    <p>You have been asked, as the data science architect, to design and build
+    the predictive solution and to defend the design decisions behind it.</p>
+  </section>
+
+  <section id="objective">
+    <h2><span class="num">2</span>Your objective</h2>
+    <p>Deliver an <b>end-to-end, reproducible ML solution</b> that, given a
+    pump's sensor history up to the present, forecasts how close it is to
+    failure — early enough and reliably enough to act on.</p>
+    <div class="callout">
+      <b>What we are really assessing.</b> This is an architect role. We care
+      far more about <i>how you frame the problem, interrogate the data,
+      engineer features, validate honestly, and reason about trade-offs</i>
+      than about squeezing out a leaderboard score. A clear, well-argued,
+      reproducible solution beats an opaque high-accuracy one.
+    </div>
+  </section>
+
+  <section id="data">
+    <h2><span class="num">3</span>The dataset</h2>
+    <p>Everything is in <code>data/</code>. Full per-column definitions are in
+    <code>docs/data_dictionary.md</code> — read it before you model.</p>
+    <table>
+      <thead><tr><th>File</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>data/train.csv</code></td>
+          <td>Run-to-failure sensor history for <b>80 training pumps</b>, long
+          format, one row per operating cycle (~1 hour). ~16.6k rows, 20
+          columns.</td>
+        </tr>
+        <tr>
+          <td><code>data/train_units.csv</code></td>
+          <td>One row per training pump: commissioning date, number of cycles
+          recorded, and the <b><code>event</code></b> flag (see §4).</td>
+        </tr>
+        <tr>
+          <td><code>data/sample_test_input.csv</code></td>
+          <td>A small illustrative example showing the <b>exact schema your
+          inference code will receive</b> at the live test (§7). Two pumps,
+          relabelled, no failure point.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <b>This is production historian data — treat it as such.</b> It was
+      exported from a real SCADA system serving a mixed fleet. Channel quality,
+      relevance and completeness are <i>not</i> guaranteed. Part of the job is
+      deciding what to trust. We are not going to tell you which signals matter.
+    </div>
+  </section>
+
+  <section id="failure">
+    <h2><span class="num">4</span>How failure is encoded</h2>
+    <p>There is no explicit "failure" column. Failure is encoded through the
+    <code>event</code> flag in <code>train_units.csv</code>:</p>
+    <table>
+      <thead><tr><th style="width:90px">event</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge b-amber">1 · failed</span></td>
+          <td>The pump <b>ran to failure</b>. Its <b>last recorded cycle is the
+          failure point</b>. 72 of the 80 units.</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-green">0 · censored</span></td>
+          <td>Monitoring <b>stopped while the pump was still healthy</b>. The
+          true failure cycle is <i>unknown</i> and lies somewhere after the last
+          recorded cycle. 8 of the 80 units.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      The censored units are deliberate, and they are a real-world fact of
+      reliability data. How you treat them is part of what we are evaluating —
+      assuming their last cycle is a failure will silently poison your labels.
+    </div>
+  </section>
+
+  <section id="framing">
+    <h2><span class="num">5</span>Choose your framing</h2>
+    <p>We are giving you the raw run-to-failure data, not a pre-labelled target.
+    <b>How you frame the prediction problem is your decision to make and to
+    defend.</b> Reasonable framings include:</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="badge b-purple">Option A</span>
+        <h3>Remaining Useful Life</h3>
+        <p style="font-size:13.5px;margin:6px 0 0">Regress the number of cycles
+        left before failure. Direct, continuous, intuitive to operators.</p>
+      </div>
+      <div class="card">
+        <span class="badge b-purple">Option B</span>
+        <h3>Failure-within-window</h3>
+        <p style="font-size:13.5px;margin:6px 0 0">Classify whether failure
+        occurs within the next <i>N</i> cycles. Maps cleanly to an alerting
+        threshold; needs care on imbalance and calibration.</p>
+      </div>
+      <div class="card">
+        <span class="badge b-purple">Option C</span>
+        <h3>Survival / hazard</h3>
+        <p style="font-size:13.5px;margin:6px 0 0">Model time-to-event directly
+        — naturally handles the censored units.</p>
+      </div>
+      <div class="card">
+        <span class="badge b-purple">Option D</span>
+        <h3>Your own</h3>
+        <p style="font-size:13.5px;margin:6px 0 0">Something else entirely, if
+        you can justify it. We want your reasoning, not a prescribed answer.</p>
+      </div>
+    </div>
+    <div class="callout note">
+      <b>Pick one and own it.</b> Be ready to explain why it fits this data,
+      this business problem, and this fleet size — and what you traded away.
+    </div>
+  </section>
+
+  <section id="deliver">
+    <h2><span class="num">6</span>What to build</h2>
+    <p>Submit a single Git repository (this one, extended) containing:</p>
+    <table>
+      <thead><tr><th style="width:34%">Deliverable</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><b>Reproducible pipeline</b></td>
+          <td>Data prep → feature engineering → training → evaluation. A fresh
+          clone must run it from a documented command. Pin dependencies; seed
+          randomness.</td></tr>
+        <tr><td><b>Trained model artifact</b></td>
+          <td>Saved weights / serialized model, loadable by your inference code
+          without retraining.</td></tr>
+        <tr><td><b>Inference interface</b></td>
+          <td>A script or function that takes a CSV in the documented schema and
+          emits predictions — see §7 for the exact contract.</td></tr>
+        <tr><td><b>Evaluation</b></td>
+          <td>Honest validation with unit-level splits (no leakage across a
+          pump's own timeline), the metrics you chose, and why.</td></tr>
+        <tr><td><b>README</b></td>
+          <td>How to set up, train, evaluate, and run inference. Plus a short
+          <b>design write-up</b>: framing, architecture, key decisions,
+          assumptions, and what you would do with more time.</td></tr>
+      </tbody>
+    </table>
+    <p>Any language is fine; Python is expected. Any libraries, classical or
+    deep learning. A simple model you understand and can defend is entirely
+    acceptable.</p>
+  </section>
+
+  <section id="inference">
+    <h2><span class="num">7</span>The live inference test</h2>
+    <p>In the final 15 minutes of your presentation we will hand you a CSV of
+    <b>pumps you have never seen</b> — same schema as
+    <code>sample_test_input.csv</code>, each truncated at some point before
+    failure — and run your inference code live.</p>
+    <h3>Output contract</h3>
+    <p>Whatever framing you chose in §5, your inference must produce, per unit, a
+    <b>predicted Remaining Useful Life</b> — estimated cycles from the last
+    observed cycle to failure. This is the common yardstick we score on. You may
+    add columns (failure probability, confidence interval, failure-mode guess)
+    — richer output is welcome.</p>
+    <pre><code># expected: a predictions CSV, one row per unit
+unit_id,predicted_rul
+PUMP_T01,57
+PUMP_T02,33
+...</code></pre>
+    <p>Build this against <code>sample_test_input.csv</code> so it is a clean,
+    one-command run on the day. It must run on CPU in a few minutes — no GPU,
+    no internet.</p>
+    <div class="callout warn">
+      <b>If it does not run, we cannot score it.</b> A working modest model
+      beats a brilliant one that breaks on unfamiliar input. Rehearse the live
+      command end-to-end before the call.
+    </div>
+  </section>
+
+  <section id="present">
+    <h2><span class="num">8</span>The presentation</h2>
+    <p>One hour, with the team. Slides optional — a walkthrough of the repo and
+    your reasoning is just as good.</p>
+    <table>
+      <thead><tr><th style="width:90px">Time</th><th>Segment</th></tr></thead>
+      <tbody>
+        <tr><td><b>45 min</b></td><td>Architecture, data understanding, problem
+          framing, feature engineering, the training process, model design, and
+          your evaluation results. Expect us to probe decisions and trade-offs
+          throughout.</td></tr>
+        <tr><td><b>15 min</b></td><td>Live inference on our held-out test pumps,
+          followed by Q&amp;A.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="evaluate">
+    <h2><span class="num">9</span>How we evaluate</h2>
+    <p>We weight <b>reasoning and engineering judgment</b> above raw accuracy.</p>
+    <table>
+      <thead><tr><th>Dimension</th><th>What a strong submission shows</th></tr></thead>
+      <tbody>
+        <tr><td><b>Problem framing</b></td><td>A justified choice of target and
+          horizon, tied to the business problem and the data you actually
+          have.</td></tr>
+        <tr><td><b>Data understanding</b></td><td>Real EDA. You assessed channel
+          quality and relevance, and noticed the structure in the operating
+          data, rather than feeding all 20 columns in raw.</td></tr>
+        <tr><td><b>Feature engineering</b></td><td>Time-series features that fit
+          degradation behaviour; sensible treatment of missing and noisy
+          signals.</td></tr>
+        <tr><td><b>Modelling &amp; architecture</b></td><td>A model appropriate
+          to a 80-unit fleet. Complexity is justified, not assumed.</td></tr>
+        <tr><td><b>Validation honesty</b></td><td>Unit-level splits, no leakage
+          across a pump's timeline, metrics that match the framing, and a clear
+          read on where the model fails.</td></tr>
+        <tr><td><b>Reproducibility</b></td><td>A fresh clone runs. Pinned deps,
+          seeds, a clear README.</td></tr>
+        <tr><td><b>Communication</b></td><td>You can defend every decision and
+          name the limitations yourself.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="rules">
+    <h2><span class="num">10</span>Ground rules</h2>
+    <ul>
+      <li><b>AI assistants are allowed.</b> Use whatever tools you normally
+      would. But you must understand and be able to defend every line — we will
+      probe deeply.</li>
+      <li><b>Pretrained models and any libraries are fine</b>, as long as the
+      pipeline runs offline on CPU for the live test.</li>
+      <li><b>Do not over-build.</b> Three days. A focused, well-reasoned
+      solution is the goal — not a platform.</li>
+      <li><b>Document assumptions</b> rather than emailing questions. Stating a
+      reasonable assumption clearly is itself a signal we value. If something is
+      genuinely blocking, do reach out.</li>
+      <li><b>Commit incrementally</b> — we like to see how the work
+      progressed.</li>
+    </ul>
+  </section>
+
+  <section id="submit">
+    <h2><span class="num">11</span>Timeline &amp; submission</h2>
+    <ul>
+      <li><b>Day 0</b> — you receive this repository.</li>
+      <li><b>~3 days</b> — design and build.</li>
+      <li><b>Presentation day</b> — push your final commit before the call, and
+      present (1 hour, §8). Put your write-up in the <code>README</code> and any
+      extra deliverables under <code>submission/</code>.</li>
+    </ul>
+    <p>Confirm the presentation time with your CODVO.AI contact. Questions are
+    welcome before then — just reply to the assignment email.</p>
+  </section>
+
+  <section id="faq">
+    <h2><span class="num">12</span>FAQ</h2>
+    <h3>Can I drop columns or units?</h3>
+    <p>Yes — if you justify it. Removing a channel you have shown to be
+    uninformative is good engineering. Removing data because it is inconvenient
+    is not.</p>
+    <h3>Deep learning or classical ML?</h3>
+    <p>Your call. Both can score well here. We will ask why your choice fits a
+    fleet of this size — have an answer.</p>
+    <h3>How accurate does it need to be?</h3>
+    <p>There is no pass/fail threshold. We assess the whole approach. An honest
+    "here is where it works and here is where it does not" is worth more than an
+    inflated number.</p>
+    <h3>What if my inference output is richer than predicted RUL?</h3>
+    <p>Great — include the extra columns. Just make sure <code>predicted_rul</code>
+    is present so we can score the live test consistently.</p>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <b>CODVO.AI</b> &nbsp;·&nbsp; Data Science Architect — Take-Home Assignment
+  &nbsp;·&nbsp; Questions? Reply to your assignment email.
+</footer>
+
+</body>
+</html>

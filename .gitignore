@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# ML artifacts (commit your final model deliberately, not these)
+*.tmp
+mlruns/
+wandb/
+.DS_Store

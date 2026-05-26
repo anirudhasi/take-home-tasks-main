@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Train pipeline",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train.py",
+      "console": "integratedTerminal",
+      "args": []
+    },
+    {
+      "name": "Train with Optuna tuning",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train.py",
+      "console": "integratedTerminal",
+      "args": ["--tune"]
+    },
+    {
+      "name": "Predict (sample input)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/predict.py",
+      "console": "integratedTerminal",
+      "args": ["--input", "data/sample_test_input.csv", "--output", "submission/predictions/predictions.csv"]
+    },
+    {
+      "name": "Predict + SHAP (sample input)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/predict.py",
+      "console": "integratedTerminal",
+      "args": ["--input", "data/sample_test_input.csv", "--shap"]
+    },
+    {
+      "name": "LIVE INFERENCE (presentation day)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/predict.py",
+      "console": "integratedTerminal",
+      "args": ["--input", "REPLACE_WITH_TEST_FILE.csv", "--output", "live_predictions.csv", "--shap"]
+    }
+  ]
+}

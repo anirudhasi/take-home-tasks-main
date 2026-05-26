@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& \"C:\\\\Users\\\\sangi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\Scripts\\\\jupyter.exe\" nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=600 \"notebooks/04_ModelSelection.ipynb\" 2>&1)"
+    ]
+  }
+}
